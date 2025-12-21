@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="space-y-4">
+  {% if participant_no %}
+  <div class="text-sm text-gray-500 mb-2">
+    Participant #: <span class="font-medium">{{ "%03d"|format(participant_no) }}</span>
+  </div>
+  {% endif %}
+  <h2 class="text-xl font-semibold">Demographics</h2>
+  <p class="text-sm text-gray-600">Just a few quick questions.</p>
+  <form id="demo-form" class="bg-white rounded-xl p-4 shadow space-y-4" onsubmit="return submitDemo(event)">
+    <span id="demogMsg" class="text-sm text-gray-700" aria-live="polite"></span>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <label class="block">
+        <span class="text-sm text-gray-700">Age</span>
+        <select name="age_band" class="mt-1 w-full rounded-lg border p-2" required>
+          <option value="" disabled selected>Select</option>
+          <option>18–24</option>
+          <option>25–34</option>
+          <option>35–44</option>
+          <option>45–54</option>
+          <option>55–64</option>
+          <option>65+</option>
+          <option>Prefer not to say</option>
+        </select>
+      </label>
+      <label class="block">
+        <span class="text-sm text-gray-700">Gender</span>
+        <select id="gender-select" name="gender" class="mt-1 w-full rounded-lg border p-2" required onchange="toggleSelfDescribe()">
+          <option value="" disabled selected>Select</option>
+          <option>Female</option>
+          <option>Male</option>
+          <option>Non-binary</option>
+          <option>Prefer not to say</option>
+          <option>Self-describe</option>
+        </select>
+        <input id="gender-self" type="text" class="mt-2 w-full rounded-lg border p-2 hidden" placeholder="Describe your gender" aria-hidden="true">
+      </label>
+    </div>
+    <div>
+      <span class="text-sm text-gray-700 block mb-1">Puzzle game experience</span>
+      <div class="flex items-center gap-4">
+        <label class="inline-flex items-center gap-2">
+          <input type="radio" name="puzzle_experience" value="None" required>
+          <span>None</span>
+        </label>
+        <label class="inline-flex items-center gap-2">
+          <input type="radio" name="puzzle_experience" value="Some">
+          <span>Some</span>
+        </label>
+        <label class="inline-flex items-center gap-2">
+          <input type="radio" name="puzzle_experience" value="A lot">
+          <span>A lot</span>
+        </label>
+      </div>
+    </div>
+    <div id="demo-error" class="text-sm text-red-600"></div>
+    <button type="submit" class="px-4 py-2 rounded-xl bg-black text-white">Continue to study</button>
+  </form>
+</section>
+<script>
+function toggleSelfDescribe(){
+  const sel = document.getElementById('gender-select');
+  const selfBox = document.getElementById('gender-self');
+  const isSelf = sel.value === 'Self-describe';
+  if(isSelf){
+    selfBox.classList.remove('hidden');
+    selfBox.setAttribute('required','required');
+    selfBox.setAttribute('aria-hidden','false');
+    selfBox.focus();
+  }else{
+    selfBox.classList.add('hidden');
+    selfBox.removeAttribute('required');
+    selfBox.setAttribute('aria-hidden','true');
+    selfBox.value = '';
+  }
+}
+
+async function submitDemo(ev){
+  ev.preventDefault();
+  const form = ev.target;
+  const genderSel = document.getElementById('gender-select').value;
+  const genderSelf = document.getElementById('gender-self').value.trim();
+  const genderFinal = (genderSel === 'Self-describe') ? genderSelf : genderSel;
+
+  const data = {
+    age_band: form.age_band.value,
+    gender: genderFinal,
+    puzzle_experience: (new FormData(form)).get('puzzle_experience') || ''
+  };
+  try{
+    const res = await fetch('/api/demographics', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+    if(!res.ok){
+      const j = await res.json().catch(()=>({detail:'Unknown error'}));
+      document.getElementById('demo-error').textContent = j.detail || 'Something went wrong.';
+      return;
+    }
+    const j = await res.json();
+    window.location.assign(j.redirect || '/study');
+  }catch(e){
+    document.getElementById('demo-error').textContent = 'Network error.';
+  }
+  return false;
+}
+</script>
+{% endblock %}

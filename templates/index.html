@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="space-y-6 max-w-3xl">
+  <h1 class="text-2xl font-bold">Sliding Puzzle Study</h1>
+  <p class="text-sm text-gray-600">Thank you for helping our research on puzzle interaction and workload.</p>
+
+  <h2 class="text-lg font-semibold">Welcome</h2>
+  <p class="text-sm text-gray-700">
+    In this study, you'll play a short 4×4 sliding-tile puzzle across <strong>two rounds</strong>.
+    We measure completion time, moves, and short workload questions. If you complete the study successfully,
+    you'll receive a <strong>$10 Amazon gift card</strong> via email.
+  </p>
+
+  <!-- What you'll do -->
+  <div class="bg-white rounded-xl shadow p-4">
+    <div class="font-medium mb-2">▼ What you'll do</div>
+    <ul class="list-disc ml-5 space-y-1 text-sm text-gray-700">
+      <li>Read the instructions on this page.</li>
+      <li>Provide your name and email (for gift card delivery) and give consent.</li>
+      <li>Fill a brief demographics form (age, gender, puzzle experience).</li>
+      <li>Play <strong>2 rounds</strong> of the 4×4 sliding puzzle (one Easy, one Hard).</li>
+      <li>After each round, answer two short workload questionnaires.</li>
+      <li>Complete a brief post-study survey. That’s it!</li>
+    </ul>
+  </div>
+
+  <!-- Instructions & controls -->
+  <div class="bg-white rounded-xl shadow p-4">
+    <div class="font-medium mb-2">▼ Instructions &amp; controls</div>
+    <ul class="list-disc ml-5 space-y-2 text-sm text-gray-700">
+      <li>On the study page, click <strong>“Start level”</strong> to begin each round.</li>
+      <li><strong>Move tiles by clicking</strong> a tile adjacent to the blank space. Use a mouse (or tap on touch devices).</li>
+      <li><strong>Try to solve the puzzle.</strong> If you can’t, you may quit a round after the minimum time (the page will tell you).</li>
+      <li>Works on phones/tablets, but <strong>desktop or laptop is recommended</strong> for the best experience.</li>
+    </ul>
+  </div>
+
+  <!-- Compensation & privacy -->
+  <div class="bg-white rounded-xl shadow p-4">
+    <div class="font-medium mb-2">▼ Compensation &amp; privacy</div>
+    <p class="text-sm text-gray-700">
+      You will receive a <strong>$10 Amazon gift card</strong> if you finish all rounds and surveys.
+      One participation per person. We store your name/email only for compensation delivery and never share it.
+    </p>
+  </div>
+
+  <!-- Get started -->
+  <div class="bg-white rounded-xl shadow p-4">
+    <div class="font-medium mb-3">Get started</div>
+    <form id="consentForm" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-900">Full name</label>
+          <input id="name" name="name" type="text" required
+                 class="mt-1 w-full rounded border border-gray-300 p-2"
+                 placeholder="Alex Johnson" autocomplete="name" />
+        </div>
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-900">Email</label>
+          <input id="email" name="email" type="email" required
+                 class="mt-1 w-full rounded border border-gray-300 p-2"
+                 placeholder="alex@example.com" autocomplete="email" />
+        </div>
+      </div>
+
+      <!-- Session type -->
+      <div>
+        <span class="block text-sm font-medium text-gray-900">Session type</span>
+        <div class="mt-1 flex items-center gap-6 text-sm text-gray-700">
+          <label class="inline-flex items-center gap-2">
+            <input type="radio" name="mode" value="research" checked>
+            Research session (default)
+          </label>
+          <label class="inline-flex items-center gap-2">
+            <input type="radio" name="mode" value="pilot">
+            Pilot session
+          </label>
+        </div>
+      </div>
+
+      <!-- Sequence selection (minimal labels) -->
+      <div>
+        <span class="block text-sm font-medium text-gray-900">Sequence (survey order)</span>
+        <div class="mt-1 flex items-center gap-6 text-sm text-gray-700">
+          <label class="inline-flex items-center gap-2">
+            <input type="radio" name="seq" value="A" checked>
+            Sequence A
+          </label>
+          <label class="inline-flex items-center gap-2">
+            <input type="radio" name="seq" value="B">
+            Sequence B
+          </label>
+        </div>
+      </div>
+
+      <label class="flex items-start gap-2 text-sm text-gray-700">
+        <input id="consent" name="consent" type="checkbox" required class="mt-1" />
+        <span>I have read the above and consent to participate.</span>
+      </label>
+
+      <div class="flex items-center gap-3">
+        <button type="submit" class="px-4 py-2 rounded-lg bg-black text-white">I’m interested</button>
+        <span id="homeMsg" class="text-sm text-gray-700" aria-live="polite"></span>
+      </div>
+    </form>
+  </div>
+
+  <p class="text-xs text-gray-500">
+    By participating, you agree to the consent information on the home page.
+  </p>
+
+  <!-- Inline submit handler -->
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('consentForm');
+    if (!form) return;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const msg = document.getElementById('homeMsg');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.textContent = '';
+      if (!form.reportValidity()) return;
+
+      const payload = {
+        name:   (document.getElementById('name')?.value || '').trim(),
+        email:  (document.getElementById('email')?.value || '').trim(),
+        consent: !!document.getElementById('consent')?.checked,
+        mode:   form.querySelector('input[name="mode"]:checked')?.value || 'research',
+        seq:    form.querySelector('input[name="seq"]:checked')?.value || 'A'
+      };
+
+      submitBtn?.setAttribute('disabled', 'disabled');
+      try {
+        const r = await fetch('/api/consent', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        if (r.ok) { window.location.href = '/demographics'; return; }
+        const txt = await r.text();
+        try { const j = JSON.parse(txt); msg.textContent = j.detail || j.error || 'Could not save consent.'; }
+        catch { msg.textContent = txt || 'Could not save consent.'; }
+      } catch {
+        msg.textContent = 'Network error. Please try again.';
+      } finally {
+        submitBtn?.removeAttribute('disabled');
+      }
+    });
+  });
+  </script>
+</section>
+{% endblock %}

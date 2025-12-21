@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="space-y-6 max-w-3xl">
+  <h2 class="text-xl font-semibold">Post-Study Survey</h2>
+  <p class="text-sm text-gray-600">
+    This survey has two parts: (A) how it felt to answer with sliders vs. descriptive text, and
+    (B) your overall evaluation of those two methods (ease, satisfaction, etc.).
+  </p>
+
+  <form method="POST" action="/post" class="space-y-6">
+
+    <h3 class="text-lg font-semibold pt-4">A) Sliders vs. Descriptive Text</h3>
+
+    <div>
+      <label class="block font-medium text-gray-900 mb-1">
+        1) Which method felt more natural to describe your workload?
+      </label>
+      <div class="space-y-2 text-sm">
+        <label class="flex items-center gap-2">
+          <input type="radio" name="method_natural" value="slider" required>
+          <span>Slider</span>
+        </label>
+        <label class="flex items-center gap-2">
+          <input type="radio" name="method_natural" value="descriptive">
+          <span>Descriptive text</span>
+        </label>
+      </div>
+    </div>
+
+    <div>
+      <label class="block font-medium text-gray-900 mb-1">
+        2) Which captured nuances or context better?
+      </label>
+      <div class="space-y-2 text-sm">
+        <label class="flex items-center gap-2">
+          <input type="radio" name="method_nuance" value="slider" required>
+          <span>Slider</span>
+        </label>
+        <label class="flex items-center gap-2">
+          <input type="radio" name="method_nuance" value="descriptive">
+          <span>Descriptive text</span>
+        </label>
+      </div>
+    </div>
+
+    <div>
+      <label class="block font-medium text-gray-900 mb-1">
+        3) If descriptive answers are summarized into 1–7 later, how fair/accurate would that feel?
+      </label>
+      <textarea name="summarization_fairness_text" rows="3"
+        class="w-full rounded border border-gray-300 p-2"
+        placeholder="A sentence or two..." required></textarea>
+    </div>
+
+    <div>
+      <label for="method_why" class="block font-medium text-gray-900 mb-1">
+        4) Briefly, which method did you prefer over the other and why?
+      </label>
+      <textarea id="method_why" name="method_why" rows="3"
+        class="w-full rounded border border-gray-300 p-2"
+        placeholder="A sentence or two..." required></textarea>
+    </div>
+
+    <h3 class="text-lg font-semibold pt-4">B) Overall evaluation (Sliders vs. Descriptive Text)</h3>
+
+
+    <div class="pt-2">
+      <button type="submit" class="px-4 py-2 rounded-lg bg-indigo-600 text-white">Finish</button>
+    </div>
+  </form>
+</section>
+{% endblock %}
