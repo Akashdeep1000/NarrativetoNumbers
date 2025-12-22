@@ -202,10 +202,6 @@ NarrativetoNumbers/
 | `POST /api/tlx/slider` | POST | Record slider-based NASA-TLX ratings |
 | `POST /api/tlx/descriptive` | POST | Submit free-text + get LLM validation & scores |
 
-### Data Export (Admin)
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `GET /api/export/snapshot` | GET | Trigger full data export |
 
 ---
 
