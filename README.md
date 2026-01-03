@@ -244,20 +244,8 @@ LLM_MODEL = "gpt-4o-mini"  # Set via env: LLM_MODEL=gpt-4o-mini
 
 ---
 
-## 📝 Citation
 
-```bibtex
-@inproceedings{lastname2025narrative,
-  title={From Narrative to Numbers: Evaluating Survey Questionnaires with Large Language Models},
-  author={Lastname, Firstname and Co-author, Name},
-  booktitle={Proceedings of the CHI Conference on Human Factors in Computing Systems},
-  year={2025},
-  pages={1--12},
-  organization={ACM}
-}
-```
 
----
 
 ## 📜 License
 
