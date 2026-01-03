@@ -245,18 +245,8 @@ LLM_MODEL = "gpt-4o-mini"  # Set via env: LLM_MODEL=gpt-4o-mini
 ---
 
 
-
-
 ## 📜 License
 
 This project is distributed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
-
----
-
-## 📧 Support & Contact
-
-For questions, bugs, or feature requests:
-- **Issue Tracker**: [GitHub Issues](https://github.com/Akashdeep1000/NarrativetoNumbers/issues)
-- **Email**: akashdeep.chakraborty@ucf.edu
 
 ---
