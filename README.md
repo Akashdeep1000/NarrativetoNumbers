@@ -84,12 +84,6 @@ LLM_MODEL=gpt-4o-mini
 
 ```
 
-### Step 5: Initialize Database
-```bash
-# Database tables are auto-created on first run
-# SQLite database will be generated at ./data/responses.db
-```
-
 ---
 
 ## 🚀 Running the Application
